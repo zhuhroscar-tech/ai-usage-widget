@@ -29,7 +29,10 @@ def _resource_path(*parts) -> str:
     return str(base.joinpath(*parts))
 
 
+# Used only for alert-dialog icons (rumps.alert's icon_path=) — the
+# status bar itself shows no icon, only colored dots + percentages.
 ICON_PATH = _resource_path("assets", "icon_alert.png")
+
 
 # First-run guide: a small marker file, not the auth files, so re-installs
 # or moving the app doesn't re-trigger it unless this support dir is wiped.
@@ -99,9 +102,20 @@ def bar(percent_remaining, width=10):
     return "\u2588" * filled + "\u2591" * (width - filled)
 
 
+def _alert(*args, **kwargs):
+    """Thin wrapper around rumps.alert that always uses our own icon,
+    so dialogs show the telescope logo instead of falling back to
+    the generic Python rocket icon."""
+    kwargs.setdefault("icon_path", ICON_PATH)
+    return rumps.alert(*args, **kwargs)
+
+
 class UsageApp(rumps.App):
     def __init__(self):
-        super().__init__(name=APP_NAME, title="AI \u2013", icon=ICON_PATH, quit_button=None)
+        # No icon in the status bar — colored dots + percentages only.
+        # The custom telescope icon (assets/AppIcon.icns) is still used
+        # for the Dock/Finder app icon via the .spec file.
+        super().__init__(name=APP_NAME, title="AI \u2013", quit_button=None)
         self.menu = [
             rumps.MenuItem("claude_header", callback=None),
             rumps.MenuItem("claude_line1", callback=None),
@@ -151,7 +165,7 @@ class UsageApp(rumps.App):
         self.run_welcome_guide()
 
     def run_welcome_guide(self):
-        rumps.alert(
+        _alert(
             title=f"Welcome to {APP_NAME}",
             message=(
                 "This little menu bar item shows how much of your ChatGPT "
@@ -164,13 +178,13 @@ class UsageApp(rumps.App):
 
         # --- Step 1: ChatGPT ---
         if chatgpt_signin.is_signed_in():
-            rumps.alert(
+            _alert(
                 title="ChatGPT — connected",
                 message="You're already signed in to ChatGPT. Usage will show up in the menu bar shortly.",
                 ok="Continue",
             )
         else:
-            choice = rumps.alert(
+            choice = _alert(
                 title="Connect ChatGPT",
                 message=(
                     "Click Sign In to open your browser and log in to "
@@ -186,13 +200,13 @@ class UsageApp(rumps.App):
         # --- Step 2: Claude ---
         claude_ok = claude_provider.claude_app_installed()
         if claude_ok:
-            rumps.alert(
+            _alert(
                 title="Claude — detected",
                 message="Found the Claude desktop app on this Mac. If you're signed in there, usage will show up automatically — nothing else to do.",
                 ok="Continue",
             )
         else:
-            choice = rumps.alert(
+            choice = _alert(
                 title="Connect Claude",
                 message=(
                     "Claude works a little differently: install the Claude "
@@ -209,7 +223,7 @@ class UsageApp(rumps.App):
                 webbrowser.open("https://claude.ai/download")
 
         # --- Step 3: done ---
-        rumps.alert(
+        _alert(
             title="You're all set",
             message=(
                 "Look for the colored numbers next to the clock, e.g. "
@@ -239,7 +253,7 @@ class UsageApp(rumps.App):
 
             def after():
                 if not result.get("ok"):
-                    rumps.alert(
+                    _alert(
                         title="ChatGPT sign-in failed",
                         message=result.get("error", "Unknown error"),
                     )
