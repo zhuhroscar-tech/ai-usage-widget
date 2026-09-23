@@ -49,6 +49,11 @@ your own login session. Nothing is sent anywhere else, and nothing is
 uploaded to the developer of this app. Source is fully open — read
 `providers/` to see exactly what each request does.
 
+The only thing this app writes to disk itself is a tiny cache
+(currently just a discovered Claude organization ID, a few bytes) at
+`~/.ai-usage-widget/`. Click the menu bar item → **Clear Cache** to
+delete it any time — this doesn't sign you out of either provider.
+
 ## Building from source
 
 Requires Python 3.11+.

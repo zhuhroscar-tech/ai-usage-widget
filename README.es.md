@@ -60,6 +60,12 @@ ningún otro lugar, y no se sube nada al desarrollador de esta app.
 El código fuente es completamente abierto — revisa `providers/` para
 ver exactamente qué hace cada solicitud.
 
+Lo único que esta app escribe en disco por sí misma es una pequeña
+caché (por ahora, solo un ID de organización de Claude descubierto,
+unos pocos bytes) en `~/.ai-usage-widget/`. Haz clic en el ítem de la
+barra de menú → **Clear Cache** para borrarla cuando quieras — esto
+no cierra tu sesión en ninguno de los dos proveedores.
+
 ## Compilar desde el código fuente
 
 Requiere Python 3.11 o superior.

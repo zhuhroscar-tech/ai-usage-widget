@@ -12,6 +12,8 @@ import webbrowser
 from datetime import datetime, timezone
 from pathlib import Path
 
+import shutil
+
 sys.path.insert(0, str(Path(__file__).parent))
 
 import rumps
@@ -102,6 +104,32 @@ def bar(percent_remaining, width=10):
     return "\u2588" * filled + "\u2591" * (width - filled)
 
 
+# The only on-disk cache this app writes itself (a tiny discovered-org-id
+# file — see providers/claude_provider.py's ORG_CACHE). Deliberately does
+# NOT include ~/.codex/auth.json (that's your ChatGPT sign-in, not cache)
+# or Claude.app's own cookie store (that's Claude's file, not ours).
+CACHE_DIR = Path.home() / ".ai-usage-widget"
+
+
+def cache_size_bytes() -> int:
+    if not CACHE_DIR.exists():
+        return 0
+    return sum(f.stat().st_size for f in CACHE_DIR.rglob("*") if f.is_file())
+
+
+def fmt_bytes(n: int) -> str:
+    if n < 1024:
+        return f"{n} B"
+    if n < 1024 * 1024:
+        return f"{n / 1024:.1f} KB"
+    return f"{n / (1024 * 1024):.1f} MB"
+
+
+def clear_cache() -> None:
+    if CACHE_DIR.exists():
+        shutil.rmtree(CACHE_DIR, ignore_errors=True)
+
+
 def _alert(*args, **kwargs):
     """Thin wrapper around rumps.alert that always uses our own icon,
     so dialogs show the telescope logo instead of falling back to
@@ -131,6 +159,9 @@ class UsageApp(rumps.App):
             rumps.MenuItem("Refresh now", callback=self.refresh_clicked),
             rumps.MenuItem("Show Welcome Guide…", callback=self.show_welcome_clicked),
             None,
+            rumps.MenuItem("cache_size", callback=None),
+            rumps.MenuItem("Clear Cache", callback=self.clear_cache_clicked),
+            None,
             rumps.MenuItem("Quit", callback=rumps.quit_application),
         ]
         # AppKit auto-disables (and dims) any menu item with no action
@@ -143,7 +174,7 @@ class UsageApp(rumps.App):
         top_menu.setAutoenablesItems_(False)
         for key in ("claude_header", "claude_line1", "claude_line2",
                     "chatgpt_header", "chatgpt_line1", "chatgpt_line2",
-                    "updated"):
+                    "updated", "cache_size"):
             self.menu[key]._menuitem.setEnabled_(True)
         self._last_fetch = None
         self._signing_in = False
@@ -270,6 +301,18 @@ class UsageApp(rumps.App):
         chatgpt_signin.sign_out()
         self.refresh(None)
 
+    def clear_cache_clicked(self, _sender):
+        clear_cache()
+        self._update_cache_label()
+        _alert(
+            title="Cache cleared",
+            message="Token Telescope's local cache has been deleted. Your ChatGPT and Claude sign-ins are unaffected.",
+            ok="OK",
+        )
+
+    def _update_cache_label(self):
+        self.menu["cache_size"].title = f"Cache: {fmt_bytes(cache_size_bytes())}"
+
     def refresh(self, _sender):
         try:
             claude = claude_provider.fetch_usage()
@@ -313,10 +356,14 @@ class UsageApp(rumps.App):
                     f"reset in {fmt_countdown(w.resets_at)}"
                 )
             self.menu["claude_line1"].title = lines[0] if len(lines) > 0 else ""
+            self.menu["claude_line1"].hidden = len(lines) < 1
             self.menu["claude_line2"].title = lines[1] if len(lines) > 1 else ""
+            self.menu["claude_line2"].hidden = len(lines) < 2
         else:
             self.menu["claude_line1"].title = f"  {claude.error or 'No data'}"
+            self.menu["claude_line1"].hidden = False
             self.menu["claude_line2"].title = ""
+            self.menu["claude_line2"].hidden = True
 
         # --- ChatGPT section ---
         self.menu["chatgpt_header"].title = f"{g_dot} ChatGPT" + (f" ({chatgpt.plan_type})" if chatgpt.plan_type else "")
@@ -329,10 +376,14 @@ class UsageApp(rumps.App):
                     f"reset in {fmt_countdown(w.resets_at)}"
                 )
             self.menu["chatgpt_line1"].title = lines[0] if len(lines) > 0 else ""
+            self.menu["chatgpt_line1"].hidden = len(lines) < 1
             self.menu["chatgpt_line2"].title = lines[1] if len(lines) > 1 else ""
+            self.menu["chatgpt_line2"].hidden = len(lines) < 2
         else:
             self.menu["chatgpt_line1"].title = f"  {chatgpt.error or 'No data'}"
+            self.menu["chatgpt_line1"].hidden = False
             self.menu["chatgpt_line2"].title = ""
+            self.menu["chatgpt_line2"].hidden = True
 
         signed_in = chatgpt_signin.is_signed_in()
         self.menu["Sign in with ChatGPT"].hidden = signed_in
@@ -340,6 +391,7 @@ class UsageApp(rumps.App):
 
         self._last_fetch = datetime.now(timezone.utc)
         self.menu["updated"].title = f"Updated {fmt_age(self._last_fetch)} \u00b7 auto-refreshes every {REFRESH_INTERVAL_SECONDS}s"
+        self._update_cache_label()
 
 
 if __name__ == "__main__":
