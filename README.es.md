@@ -9,6 +9,27 @@ muestra cuánto has usado de tu suscripción de ChatGPT y Claude, y
 cuándo se restablece. Sin claves de API, sin terminal — inicia sesión
 con tu cuenta real como en cualquier otra app.
 
+## Diseñado para ser ligero
+
+Esta app hace una sola cosa — uso de suscripción de ChatGPT + Claude
+— y no estorba. Sin Electron, sin runtime empaquetado, sin un
+framework de 80 proveedores: solo `rumps` (una envoltura nativa muy
+delgada sobre AppKit) y la biblioteca estándar de Python.
+
+| | Token Telescope | [CodexBar](https://github.com/steipete/CodexBar) |
+|---|---|---|
+| Tamaño instalado | **34 MB** | 171 MB |
+| Tamaño de descarga | **16.5 MB** | 70.9 MB |
+| macOS mínimo | **11.0 (Big Sur)** | 14.0 (Sonoma) |
+| Proveedores | 2 (ChatGPT, Claude) | 80+ |
+
+*(Los números de CodexBar son de su versión universal para macOS
+v0.64.1 — cubre más de 80 proveedores y hace mucho más que esta app;
+la diferencia de tamaño refleja ese alcance, no es una crítica a
+CodexBar. Si necesitas cobertura amplia de muchos proveedores,
+CodexBar es la mejor opción. Si solo usas ChatGPT y Claude y quieres
+la huella más pequeña posible, esta app es para eso.)*
+
 ## Qué muestra
 
 - **Claude** — tu porcentaje de uso en la sesión de 5 horas y el

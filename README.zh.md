@@ -8,6 +8,26 @@
 订阅还剩多少用量、什么时候刷新。不需要 API Key，不需要用终端——
 像登录其他普通 App 一样，用你自己的账号登录就行。
 
+## 非常轻量化
+
+这个 App 只做一件事——ChatGPT + Claude 订阅用量——所以足够克制、
+不占资源。没有 Electron，没有内置运行时，也没有支持 80 多个厂商
+的大框架：就是 `rumps`（一个很薄的原生 AppKit 封装）加 Python
+标准库。
+
+| | Token Telescope | [CodexBar](https://github.com/steipete/CodexBar) |
+|---|---|---|
+| 安装体积 | **34 MB** | 171 MB |
+| 下载体积 | **16.5 MB** | 70.9 MB |
+| 最低系统 | **macOS 11.0（Big Sur）** | macOS 14.0（Sonoma） |
+| 支持厂商数 | 2（ChatGPT、Claude） | 80+ |
+
+*（CodexBar 的数据来自它的 v0.64.1 macOS universal 发行版——它
+支持 80 多个厂商，功能范围本来就比这个 App 大很多；体积差异是
+因为功能范围不同，不是说 CodexBar 不好。如果你需要覆盖很多不同
+厂商，CodexBar 是更合适的选择；如果你只用 ChatGPT 和 Claude，
+想要体积尽可能小，这个 App 就是为你准备的。）*
+
 ## 显示内容
 
 - **Claude** — 5 小时会话用量百分比，以及距离下次刷新还有多久
