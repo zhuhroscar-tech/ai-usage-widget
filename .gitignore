@@ -1,0 +1,10 @@
+.venv/
+build/
+dist/
+dmg_staging/
+*.dmg
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+*.spec.bak
