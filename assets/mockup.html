@@ -26,7 +26,9 @@
     display: flex; align-items: center; gap: 70px; z-index: 2;
   }
   .left { color: #fff; max-width: 420px; }
-  .title { font-size: 52px; font-weight: 700; letter-spacing: -0.02em; }
+  .logo-row { display:flex; align-items:center; gap:16px; margin-bottom: 22px; }
+  .logo-img { width:64px; height:64px; border-radius:15px; box-shadow: 0 6px 20px rgba(0,0,0,0.4); }
+  .title { font-size: 46px; font-weight: 700; letter-spacing: -0.02em; }
   .subtitle { font-size: 21px; color: #9a9aae; margin-top: 14px; line-height: 1.5; font-weight: 400; }
   .badges { display:flex; gap:10px; margin-top: 28px; }
   .badge {
@@ -78,7 +80,10 @@
 
   <div class="content">
     <div class="left">
-      <div class="title">AI Usage</div>
+      <div class="logo-row">
+        <img class="logo-img" src="icon_1024.png" alt="Token Telescope logo">
+        <div class="title">Token Telescope</div>
+      </div>
       <div class="subtitle">See your ChatGPT and Claude usage right from the macOS menu bar. Sign in with your real account — no API keys, no terminal.</div>
       <div class="badges">
         <div class="badge">macOS</div>

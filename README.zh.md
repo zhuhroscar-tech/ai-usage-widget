@@ -1,8 +1,8 @@
-# AI Usage — ChatGPT 和 Claude 用量菜单栏小工具
+# Token Telescope — ChatGPT 和 Claude 用量菜单栏小工具
 
 🌐 [English](README.md) · **[中文](README.zh.md)** · [Español](README.es.md)
 
-![AI Usage 预览图](assets/banner.png)
+![Token Telescope 预览图](assets/banner.png)
 
 一个常驻 macOS 菜单栏的小工具，实时显示你的 ChatGPT 和 Claude
 订阅还剩多少用量、什么时候刷新。不需要 API Key，不需要用终端——
@@ -16,8 +16,8 @@
 
 ## 安装（不需要写代码）
 
-1. 从 [Releases](../../releases/latest) 下载最新的 `AI Usage.dmg`。
-2. 打开它，把 **AI Usage.app** 拖进「应用程序」文件夹。
+1. 从 [Releases](../../releases/latest) 下载最新的 `Token Telescope.dmg`。
+2. 打开它，把 **Token Telescope.app** 拖进「应用程序」文件夹。
 3. 双击打开。macOS 会提示"无法验证开发者"（因为这个 App 没有经过
    苹果的公证签名）——只需**右键点击这个 App → 打开 → 打开**
    一次即可放行。这是打开任何未付费公证的独立开发者 App 的标准
@@ -52,8 +52,8 @@
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install rumps pycryptodome requests certifi pyinstaller
-.venv/bin/pyinstaller --noconfirm "AI Usage.spec"
-open "dist/AI Usage.app"
+.venv/bin/pyinstaller --noconfirm "Token Telescope.spec"
+open "dist/Token Telescope.app"
 ```
 
 或者不打包，直接运行：

@@ -1,8 +1,8 @@
-# AI Usage — widget de barra de menú para el uso de ChatGPT y Claude
+# Token Telescope — widget de barra de menú para el uso de ChatGPT y Claude
 
 🌐 [English](README.md) · [中文](README.zh.md) · **[Español](README.es.md)**
 
-![Vista previa de AI Usage](assets/banner.png)
+![Vista previa de Token Telescope](assets/banner.png)
 
 Un pequeño widget siempre activo en la barra de menú de macOS que
 muestra cuánto has usado de tu suscripción de ChatGPT y Claude, y
@@ -20,9 +20,10 @@ con tu cuenta real como en cualquier otra app.
 
 ## Instalación (no requiere programar)
 
-1. Descarga el `AI Usage.dmg` más reciente desde
+1. Descarga el `Token Telescope.dmg` más reciente desde
    [Releases](../../releases/latest).
-2. Ábrelo y arrastra **AI Usage.app** a tu carpeta de Aplicaciones.
+2. Ábrelo y arrastra **Token Telescope.app** a tu carpeta de
+   Aplicaciones.
 3. Haz doble clic para abrirlo. macOS te avisará que es de un
    desarrollador no identificado (la app no está notarizada por
    Apple) — solo tienes que hacer **clic derecho en la app → Abrir →
@@ -66,8 +67,8 @@ Requiere Python 3.11 o superior.
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install rumps pycryptodome requests certifi pyinstaller
-.venv/bin/pyinstaller --noconfirm "AI Usage.spec"
-open "dist/AI Usage.app"
+.venv/bin/pyinstaller --noconfirm "Token Telescope.spec"
+open "dist/Token Telescope.app"
 ```
 
 O ejecútalo directamente sin empaquetar:

@@ -1,4 +1,4 @@
-"""AI Usage Widget — a macOS menu bar widget showing live ChatGPT Plus
+"""Token Telescope — a macOS menu bar widget showing live ChatGPT Plus
 and Claude Pro/Max subscription usage, pulled from each app's own
 already-logged-in session. No API keys, no manual login.
 
@@ -17,11 +17,23 @@ sys.path.insert(0, str(Path(__file__).parent))
 import rumps
 from providers import claude_provider, chatgpt_provider, chatgpt_signin
 
+APP_NAME = "Token Telescope"
 REFRESH_INTERVAL_SECONDS = 90
+
+
+def _resource_path(*parts) -> str:
+    """Resolve a bundled resource whether running from source or as a
+    frozen PyInstaller app (where data files live under sys._MEIPASS
+    or next to the executable, not next to this .py file)."""
+    base = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+    return str(base.joinpath(*parts))
+
+
+ICON_PATH = _resource_path("assets", "icon_alert.png")
 
 # First-run guide: a small marker file, not the auth files, so re-installs
 # or moving the app doesn't re-trigger it unless this support dir is wiped.
-ONBOARD_DIR = Path.home() / "Library" / "Application Support" / "AI Usage"
+ONBOARD_DIR = Path.home() / "Library" / "Application Support" / APP_NAME
 ONBOARD_FLAG = ONBOARD_DIR / "onboarded"
 
 
@@ -89,7 +101,7 @@ def bar(percent_remaining, width=10):
 
 class UsageApp(rumps.App):
     def __init__(self):
-        super().__init__(name="AIUsage", title="AI \u2013", quit_button=None)
+        super().__init__(name=APP_NAME, title="AI \u2013", icon=ICON_PATH, quit_button=None)
         self.menu = [
             rumps.MenuItem("claude_header", callback=None),
             rumps.MenuItem("claude_line1", callback=None),
@@ -140,7 +152,7 @@ class UsageApp(rumps.App):
 
     def run_welcome_guide(self):
         rumps.alert(
-            title="Welcome to AI Usage",
+            title=f"Welcome to {APP_NAME}",
             message=(
                 "This little menu bar item shows how much of your ChatGPT "
                 "and Claude subscription you've used, and when it resets.\n\n"
