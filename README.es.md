@@ -1,0 +1,107 @@
+# AI Usage — widget de barra de menú para el uso de ChatGPT y Claude
+
+🌐 [English](README.md) · [中文](README.zh.md) · **[Español](README.es.md)**
+
+![Vista previa de AI Usage](assets/banner.png)
+
+Un pequeño widget siempre activo en la barra de menú de macOS que
+muestra cuánto has usado de tu suscripción de ChatGPT y Claude, y
+cuándo se restablece. Sin claves de API, sin terminal — inicia sesión
+con tu cuenta real como en cualquier otra app.
+
+## Qué muestra
+
+- **Claude** — tu porcentaje de uso en la sesión de 5 horas y el
+  tiempo hasta que se restablezca
+- **ChatGPT** — tu porcentaje de uso semanal y el tiempo hasta que
+  se restablezca
+- Un indicador de color (🟢 mucho margen · 🟡 se está agotando ·
+  🔴 casi agotado)
+
+## Instalación (no requiere programar)
+
+1. Descarga el `AI Usage.dmg` más reciente desde
+   [Releases](../../releases/latest).
+2. Ábrelo y arrastra **AI Usage.app** a tu carpeta de Aplicaciones.
+3. Haz doble clic para abrirlo. macOS te avisará que es de un
+   desarrollador no identificado (la app no está notarizada por
+   Apple) — solo tienes que hacer **clic derecho en la app → Abrir →
+   Abrir** una vez para permitirlo. Esta es la forma estándar y
+   segura de abrir cualquier app independiente que no haya pagado
+   por la notarización de Apple.
+4. Mira la barra de menú (arriba a la derecha de tu pantalla) para
+   ver los porcentajes en vivo.
+
+## Conectando tus cuentas
+
+- **ChatGPT**: haz clic en el ítem de la barra de menú →
+  **Sign in with ChatGPT** → tu navegador abrirá la página de
+  inicio de sesión real de OpenAI → inicia sesión normalmente →
+  listo. Esto usa el mismo flujo OAuth público que usa el propio
+  Codex CLI de OpenAI — tu contraseña solo la ve OpenAI, nunca esta
+  app.
+- **Claude**: si ya tienes la [app de escritorio de Claude](https://claude.ai/download)
+  instalada y con sesión iniciada, este widget la detecta
+  automáticamente. (No hay un botón "Sign in with Claude" a
+  propósito — los Términos de Servicio para consumidores de
+  Anthropic restringen el uso del cliente OAuth de Claude Code fuera
+  de Claude Code/claude.ai, así que esta app respeta eso en lugar de
+  evadirlo.)
+
+## Privacidad
+
+Esta app solo se comunica con los propios servidores de OpenAI y
+Anthropic, usando tu propia sesión ya iniciada. No se envía nada a
+ningún otro lugar, y no se sube nada al desarrollador de esta app.
+El código fuente es completamente abierto — revisa `providers/` para
+ver exactamente qué hace cada solicitud.
+
+## Compilar desde el código fuente
+
+Requiere Python 3.11 o superior.
+
+```bash
+python3 -m venv .venv
+.venv/bin/pip install rumps pycryptodome requests certifi pyinstaller
+.venv/bin/pyinstaller --noconfirm "AI Usage.spec"
+open "dist/AI Usage.app"
+```
+
+O ejecútalo directamente sin empaquetar:
+
+```bash
+.venv/bin/python app.py
+```
+
+## Cómo funciona (notas técnicas)
+
+- **ChatGPT**: OAuth por navegador (PKCE, callback local en
+  `localhost:1455`) contra `auth.openai.com`, usando el mismo
+  client ID público que usa Codex CLI. Los tokens se guardan en
+  `~/.codex/auth.json` (el mismo archivo que usa Codex CLI) y se
+  refrescan automáticamente. El uso se lee desde el propio endpoint
+  `wham/usage` de ChatGPT — los mismos datos que te muestra la
+  interfaz oficial de ChatGPT.
+- **Claude**: lee la cookie de sesión de Claude.app, protegida por
+  el Llavero de macOS (elemento `"Claude Safe Storage"`), para
+  llamar al mismo endpoint privado de uso que usa la propia interfaz
+  de Claude.app. Esto es no oficial y podría dejar de funcionar si
+  Anthropic cambia detalles internos de su frontend.
+
+Ambas integraciones usan **tu propia sesión ya autenticada** — esta
+app no conoce ni almacena tu contraseña de ninguno de los dos
+proveedores.
+
+## Limitaciones conocidas
+
+- No está notarizada por Apple (ver el paso 3 de instalación para
+  la solución).
+- El soporte de Claude depende de que Claude.app esté instalada y
+  con sesión iniciada; el soporte de ChatGPT funciona de forma
+  independiente mediante inicio de sesión por navegador.
+- Ambos endpoints de uso son no oficiales/privados y ni OpenAI ni
+  Anthropic garantizan su estabilidad.
+
+## Licencia
+
+Para uso personal. No afiliado con OpenAI ni Anthropic.

@@ -32,6 +32,7 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='assets/AppIcon.icns',
 )
 coll = COLLECT(
     exe,
@@ -45,7 +46,7 @@ coll = COLLECT(
 app = BUNDLE(
     coll,
     name='AI Usage.app',
-    icon=None,
+    icon='assets/AppIcon.icns',
     bundle_identifier='com.oscarzhu.ai-usage-widget',
     info_plist={
         'CFBundleName': 'AI Usage',

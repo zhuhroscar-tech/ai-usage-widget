@@ -1,11 +1,13 @@
 # AI Usage — menu bar widget for ChatGPT & Claude usage
 
+🌐 **[English](README.md)** · [中文](README.zh.md) · [Español](README.es.md)
+
+![AI Usage banner](assets/banner.png)
+
 A tiny always-on macOS menu bar widget that shows how much of your
 ChatGPT and Claude subscription you've used, and when it resets.
 No API keys, no terminal — sign in with your real account like any
 other app.
-
-![menu bar example](https://img.shields.io/badge/menu%20bar-%F0%9F%9F%A2%2012%25%20%F0%9F%9F%A1%2040%25-black)
 
 ## What it shows
 

@@ -91,6 +91,18 @@ class UsageApp(rumps.App):
             None,
             rumps.MenuItem("Quit", callback=rumps.quit_application),
         ]
+        # AppKit auto-disables (and dims) any menu item with no action
+        # selector — it doesn't matter that we call setEnabled_(True),
+        # NSMenu overrides it on every display pass unless we turn that
+        # behavior off. Our label-only rows (headers, usage lines,
+        # "updated") aren't meant to be clickable, but they ARE meant
+        # to be fully legible, not greyed out like a disabled button.
+        top_menu = self.menu["Quit"]._menuitem.menu()
+        top_menu.setAutoenablesItems_(False)
+        for key in ("claude_header", "claude_line1", "claude_line2",
+                    "chatgpt_header", "chatgpt_line1", "chatgpt_line2",
+                    "updated"):
+            self.menu[key]._menuitem.setEnabled_(True)
         self._last_fetch = None
         self._signing_in = False
         self.refresh(None)
