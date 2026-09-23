@@ -24,8 +24,10 @@ other app.
    developer (the app isn't Apple-notarized) — **right-click the app
    → Open → Open** once to allow it. This is the standard, safe way
    to open any indie Mac app that hasn't paid Apple for notarization.
-4. Look at the menu bar (top-right of your screen) for the live
-   percentages.
+4. A short **welcome guide** walks you through connecting your
+   ChatGPT and Claude accounts step by step — just follow the
+   on-screen prompts (you can skip either one and connect it later).
+   Replay it anytime from the menu → "Show Welcome Guide…".
 
 ## Connecting your accounts
 

@@ -29,8 +29,11 @@ con tu cuenta real como en cualquier otra app.
    Abrir** una vez para permitirlo. Esta es la forma estándar y
    segura de abrir cualquier app independiente que no haya pagado
    por la notarización de Apple.
-4. Mira la barra de menú (arriba a la derecha de tu pantalla) para
-   ver los porcentajes en vivo.
+4. Una breve **guía de bienvenida** te acompaña paso a paso para
+   conectar tus cuentas de ChatGPT y Claude — solo sigue las
+   instrucciones en pantalla (puedes omitir cualquiera de las dos y
+   conectarla más tarde). Repítela cuando quieras desde el menú →
+   "Show Welcome Guide…".
 
 ## Conectando tus cuentas
 

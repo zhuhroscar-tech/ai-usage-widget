@@ -8,6 +8,7 @@ consistent spacing, plain numbers.
 """
 import sys
 import threading
+import webbrowser
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -17,6 +18,20 @@ import rumps
 from providers import claude_provider, chatgpt_provider, chatgpt_signin
 
 REFRESH_INTERVAL_SECONDS = 90
+
+# First-run guide: a small marker file, not the auth files, so re-installs
+# or moving the app doesn't re-trigger it unless this support dir is wiped.
+ONBOARD_DIR = Path.home() / "Library" / "Application Support" / "AI Usage"
+ONBOARD_FLAG = ONBOARD_DIR / "onboarded"
+
+
+def has_onboarded() -> bool:
+    return ONBOARD_FLAG.exists()
+
+
+def mark_onboarded() -> None:
+    ONBOARD_DIR.mkdir(parents=True, exist_ok=True)
+    ONBOARD_FLAG.touch()
 
 # Status glyph system: one dot, three semantic colors. Never used decoratively.
 DOT_OK = "\U0001F7E2"       # green  — plenty of headroom (used < 50%)
@@ -88,6 +103,7 @@ class UsageApp(rumps.App):
             None,
             rumps.MenuItem("updated", callback=None),
             rumps.MenuItem("Refresh now", callback=self.refresh_clicked),
+            rumps.MenuItem("Show Welcome Guide…", callback=self.show_welcome_clicked),
             None,
             rumps.MenuItem("Quit", callback=rumps.quit_application),
         ]
@@ -108,6 +124,93 @@ class UsageApp(rumps.App):
         self.refresh(None)
         self.timer = rumps.Timer(self.refresh, REFRESH_INTERVAL_SECONDS)
         self.timer.start()
+
+        if not has_onboarded():
+            # Let the menu bar item + first refresh render before popping
+            # the welcome alert, so it's not the very first thing a user
+            # sees before anything else exists on screen.
+            rumps.Timer(self._launch_welcome, 0.8).start()
+
+    def _launch_welcome(self, timer):
+        timer.stop()
+        self.run_welcome_guide()
+
+    def show_welcome_clicked(self, _sender):
+        self.run_welcome_guide()
+
+    def run_welcome_guide(self):
+        rumps.alert(
+            title="Welcome to AI Usage",
+            message=(
+                "This little menu bar item shows how much of your ChatGPT "
+                "and Claude subscription you've used, and when it resets.\n\n"
+                "It updates automatically every 90 seconds — nothing to "
+                "configure. Let's connect your accounts."
+            ),
+            ok="Continue",
+        )
+
+        # --- Step 1: ChatGPT ---
+        if chatgpt_signin.is_signed_in():
+            rumps.alert(
+                title="ChatGPT — connected",
+                message="You're already signed in to ChatGPT. Usage will show up in the menu bar shortly.",
+                ok="Continue",
+            )
+        else:
+            choice = rumps.alert(
+                title="Connect ChatGPT",
+                message=(
+                    "Click Sign In to open your browser and log in to "
+                    "ChatGPT normally — the same login page ChatGPT itself "
+                    "uses. Your password is only ever seen by OpenAI."
+                ),
+                ok="Sign In",
+                cancel="Skip for now",
+            )
+            if choice == 1:  # "ok" button
+                self.sign_in_chatgpt_clicked(self.menu["Sign in with ChatGPT"])
+
+        # --- Step 2: Claude ---
+        claude_ok = claude_provider.claude_app_installed()
+        if claude_ok:
+            rumps.alert(
+                title="Claude — detected",
+                message="Found the Claude desktop app on this Mac. If you're signed in there, usage will show up automatically — nothing else to do.",
+                ok="Continue",
+            )
+        else:
+            choice = rumps.alert(
+                title="Connect Claude",
+                message=(
+                    "Claude works a little differently: install the Claude "
+                    "desktop app and sign in there once, and this widget "
+                    "will detect it automatically. There's no separate "
+                    "sign-in button here by design (Anthropic's terms "
+                    "don't allow third-party apps to offer Claude login "
+                    "directly)."
+                ),
+                ok="Open Claude Download Page",
+                cancel="Skip for now",
+            )
+            if choice == 1:
+                webbrowser.open("https://claude.ai/download")
+
+        # --- Step 3: done ---
+        rumps.alert(
+            title="You're all set",
+            message=(
+                "Look for the colored numbers next to the clock, e.g. "
+                "🟢12% 🟡53%. Click them anytime to see exact percentages, "
+                "reset times, refresh manually, or sign out.\n\n"
+                "🟢 plenty left · 🟡 getting low · 🔴 almost out\n\n"
+                "You can replay this guide anytime from the menu → "
+                "\"Show Welcome Guide…\"."
+            ),
+            ok="Got it",
+        )
+        mark_onboarded()
+        self.refresh(None)
 
     def refresh_clicked(self, sender):
         self.refresh(sender)

@@ -148,6 +148,10 @@ def _parse_iso(s):
         return None
 
 
+def claude_app_installed() -> bool:
+    return COOKIES_DB.exists()
+
+
 def fetch_usage() -> ClaudeUsage:
     try:
         cookies = _load_cookies()
