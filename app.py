@@ -11,6 +11,7 @@ import threading
 import webbrowser
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Optional
 
 import shutil
 
@@ -130,6 +131,35 @@ def clear_cache() -> None:
         shutil.rmtree(CACHE_DIR, ignore_errors=True)
 
 
+def installed_app_bundle() -> Optional[Path]:
+    """The .app folder this process is running from, or None when
+    running unpackaged (plain `python app.py`, no bundle to measure)."""
+    if not getattr(sys, "frozen", False):
+        return None
+    for parent in Path(sys.executable).resolve().parents:
+        if parent.suffix == ".app":
+            return parent
+    return None
+
+
+def app_bundle_size_bytes() -> Optional[int]:
+    """Total size of the installed .app on disk — what 'how much space
+    does this program take up' actually means to a user. Computed once
+    at launch (doesn't change while running) rather than on every
+    refresh, since it means walking every file in the bundle."""
+    bundle = installed_app_bundle()
+    if bundle is None:
+        return None
+    total = 0
+    for f in bundle.rglob("*"):
+        try:
+            if f.is_file() and not f.is_symlink():
+                total += f.stat().st_size
+        except OSError:
+            pass
+    return total
+
+
 def _alert(*args, **kwargs):
     """Thin wrapper around rumps.alert that always uses our own icon,
     so dialogs show the telescope logo instead of falling back to
@@ -156,10 +186,10 @@ class UsageApp(rumps.App):
             rumps.MenuItem("Sign out of ChatGPT", callback=self.sign_out_chatgpt_clicked),
             None,
             rumps.MenuItem("updated", callback=None),
-            rumps.MenuItem("Refresh now", callback=self.refresh_clicked),
+            rumps.MenuItem("Refresh Now", callback=self.refresh_clicked),
             rumps.MenuItem("Show Welcome Guide…", callback=self.show_welcome_clicked),
             None,
-            rumps.MenuItem("cache_size", callback=None),
+            rumps.MenuItem("storage_size", callback=None),
             rumps.MenuItem("Clear Cache", callback=self.clear_cache_clicked),
             None,
             rumps.MenuItem("Quit", callback=rumps.quit_application),
@@ -174,10 +204,14 @@ class UsageApp(rumps.App):
         top_menu.setAutoenablesItems_(False)
         for key in ("claude_header", "claude_line1", "claude_line2",
                     "chatgpt_header", "chatgpt_line1", "chatgpt_line2",
-                    "updated", "cache_size"):
+                    "updated", "storage_size"):
             self.menu[key]._menuitem.setEnabled_(True)
         self._last_fetch = None
         self._signing_in = False
+        # Computed once at launch, not on every 90s refresh — walking the
+        # whole .app bundle is cheap but pointless to repeat since the
+        # installed app's size never changes while it's running.
+        self._app_size_bytes = app_bundle_size_bytes()
         self.refresh(None)
         self.timer = rumps.Timer(self.refresh, REFRESH_INTERVAL_SECONDS)
         self.timer.start()
@@ -303,15 +337,20 @@ class UsageApp(rumps.App):
 
     def clear_cache_clicked(self, _sender):
         clear_cache()
-        self._update_cache_label()
+        self._update_storage_label()
         _alert(
             title="Cache cleared",
             message="Token Telescope's local cache has been deleted. Your ChatGPT and Claude sign-ins are unaffected.",
             ok="OK",
         )
 
-    def _update_cache_label(self):
-        self.menu["cache_size"].title = f"Cache: {fmt_bytes(cache_size_bytes())}"
+    def _update_storage_label(self):
+        cache = fmt_bytes(cache_size_bytes())
+        if self._app_size_bytes is not None:
+            app = fmt_bytes(self._app_size_bytes)
+            self.menu["storage_size"].title = f"App {app} \u00b7 Cache {cache}"
+        else:
+            self.menu["storage_size"].title = f"Cache {cache}"
 
     def refresh(self, _sender):
         try:
@@ -391,7 +430,7 @@ class UsageApp(rumps.App):
 
         self._last_fetch = datetime.now(timezone.utc)
         self.menu["updated"].title = f"Updated {fmt_age(self._last_fetch)} \u00b7 auto-refreshes every {REFRESH_INTERVAL_SECONDS}s"
-        self._update_cache_label()
+        self._update_storage_label()
 
 
 if __name__ == "__main__":

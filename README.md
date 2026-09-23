@@ -51,8 +51,10 @@ uploaded to the developer of this app. Source is fully open — read
 
 The only thing this app writes to disk itself is a tiny cache
 (currently just a discovered Claude organization ID, a few bytes) at
-`~/.ai-usage-widget/`. Click the menu bar item → **Clear Cache** to
-delete it any time — this doesn't sign you out of either provider.
+`~/.ai-usage-widget/`. Click the menu bar item to see the combined
+line **"App X MB · Cache Y B"** — total install size plus that
+cache — and hit **Clear Cache** to delete it any time; this doesn't
+sign you out of either provider.
 
 ## Building from source
 

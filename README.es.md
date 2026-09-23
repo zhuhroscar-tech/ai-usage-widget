@@ -63,8 +63,10 @@ ver exactamente qué hace cada solicitud.
 Lo único que esta app escribe en disco por sí misma es una pequeña
 caché (por ahora, solo un ID de organización de Claude descubierto,
 unos pocos bytes) en `~/.ai-usage-widget/`. Haz clic en el ítem de la
-barra de menú → **Clear Cache** para borrarla cuando quieras — esto
-no cierra tu sesión en ninguno de los dos proveedores.
+barra de menú para ver la línea **"App X MB · Cache Y B"** — el
+tamaño total instalado más esa caché — y usa **Clear Cache** para
+borrarla cuando quieras; esto no cierra tu sesión en ninguno de los
+dos proveedores.
 
 ## Compilar desde el código fuente
 
