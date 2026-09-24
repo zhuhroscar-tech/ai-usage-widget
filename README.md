@@ -118,6 +118,10 @@ this app does not know or store your password for either provider.
 - Both usage endpoints are unofficial/private and not guaranteed
   stable by OpenAI or Anthropic.
 
+## Release history
+
+See [CHANGELOG.md](CHANGELOG.md) for versioned release notes.
+
 ## License
 
 For personal use. Not affiliated with OpenAI or Anthropic.

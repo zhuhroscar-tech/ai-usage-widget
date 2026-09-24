@@ -112,6 +112,10 @@ open "dist/Token Telescope.app"
 - 两个用量接口都是非官方、私有的，OpenAI 和 Anthropic 都不保证
   其稳定性。
 
+## 版本记录
+
+查看 [CHANGELOG.md](CHANGELOG.md) 获取各版本发布说明。
+
 ## 许可
 
 仅供个人使用。与 OpenAI、Anthropic 官方无关。

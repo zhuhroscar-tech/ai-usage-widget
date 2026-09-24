@@ -21,6 +21,7 @@ import rumps
 from providers import claude_provider, chatgpt_provider, chatgpt_signin
 
 APP_NAME = "Token Telescope"
+APP_VERSION = "2.3.2"
 REFRESH_INTERVAL_SECONDS = 90
 
 

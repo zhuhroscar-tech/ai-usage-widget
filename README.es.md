@@ -135,6 +135,10 @@ proveedores.
 - Ambos endpoints de uso son no oficiales/privados y ni OpenAI ni
   Anthropic garantizan su estabilidad.
 
+## Historial de versiones
+
+Consulta [CHANGELOG.md](CHANGELOG.md) para ver las notas de cada versión.
+
 ## Licencia
 
 Para uso personal. No afiliado con OpenAI ni Anthropic.

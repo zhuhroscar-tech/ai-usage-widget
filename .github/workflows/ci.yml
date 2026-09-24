@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository-contract:
+    name: Repository contract
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Run repository-contract tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Check PyInstaller spec is present
+        run: test -f "Token Telescope.spec"
