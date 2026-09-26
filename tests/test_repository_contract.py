@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "2.3.2"
+EXPECTED_VERSION = "2.3.3"
 
 
 class RepositoryContractTests(unittest.TestCase):
@@ -14,6 +14,7 @@ class RepositoryContractTests(unittest.TestCase):
             "README.zh.md",
             "README.es.md",
             "CHANGELOG.md",
+            "LICENSE",
             "Token Telescope.spec",
             "app.py",
             ".github/workflows/ci.yml",
@@ -46,15 +47,19 @@ class RepositoryContractTests(unittest.TestCase):
     def test_changelog_and_readme_track_current_release(self):
         changelog = (ROOT / "CHANGELOG.md").read_text()
         self.assertIn(f"## {EXPECTED_VERSION}", changelog)
-        self.assertIn("bundle metadata", changelog.lower())
+        self.assertIn("license", changelog.lower())
 
         readme = (ROOT / "README.md").read_text()
         self.assertIn("[Releases](../../releases/latest)", readme)
-        self.assertIn("## License", readme)
+        self.assertIn("(LICENSE)", readme)
+
+        for localized in ["README.zh.md", "README.es.md"]:
+            self.assertIn("(LICENSE)", (ROOT / localized).read_text())
 
     def test_ci_runs_repository_contract(self):
         workflow = (ROOT / ".github/workflows/ci.yml").read_text()
         self.assertIn("python -m unittest discover -s tests -v", workflow)
+        self.assertIn("python -m py_compile app.py providers/*.py", workflow)
         self.assertIn("Token Telescope.spec", workflow)
 
 

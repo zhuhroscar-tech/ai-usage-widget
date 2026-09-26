@@ -141,4 +141,5 @@ Consulta [CHANGELOG.md](CHANGELOG.md) para ver las notas de cada versión.
 
 ## Licencia
 
-Para uso personal. No afiliado con OpenAI ni Anthropic.
+Token Telescope se publica bajo la [Token Telescope Personal Use License](LICENSE).
+No afiliado con OpenAI ni Anthropic.

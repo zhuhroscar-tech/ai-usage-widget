@@ -118,4 +118,5 @@ open "dist/Token Telescope.app"
 
 ## 许可
 
-仅供个人使用。与 OpenAI、Anthropic 官方无关。
+Token Telescope 使用 [Token Telescope Personal Use License](LICENSE) 发布。
+与 OpenAI、Anthropic 官方无关。

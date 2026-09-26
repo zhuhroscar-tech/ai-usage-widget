@@ -51,8 +51,8 @@ app = BUNDLE(
     info_plist={
         'CFBundleName': 'Token Telescope',
         'CFBundleDisplayName': 'Token Telescope',
-        'CFBundleShortVersionString': '2.3.2',
-        'CFBundleVersion': '2.3.2',
+        'CFBundleShortVersionString': '2.3.3',
+        'CFBundleVersion': '2.3.3',
         'LSUIElement': True,
         'LSMinimumSystemVersion': '11.0',
         'NSHighResolutionCapable': True,
